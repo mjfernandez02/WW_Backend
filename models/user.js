@@ -15,6 +15,16 @@ export default (sequelize, DataTypes) => {
       },
       lockedUntil: DataTypes.DATE,
       roleId: DataTypes.INTEGER,
+      xp: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      },
+      points: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      },
     },
     {
       sequelize,
