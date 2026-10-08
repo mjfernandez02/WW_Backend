@@ -3,8 +3,8 @@ import * as authService from "../auth.service.js";
 import db from "../../../database/index.js";
 import {
   auditLog,
-  FRONTEND_LOGIN_URL,
   setSessionCookie,
+  authorizationRedirect,
   sendError,
 } from "./helpers.js";
 
@@ -12,14 +12,7 @@ export const login = async (req, res) => {
   try {
     const schema = z.object({
       email: z.string().email(),
-      // match registration policy
-      password: z
-        .string()
-        .min(12)
-        .regex(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)/, {
-          message:
-            "Password must include upper, lower, number and special char",
-        }),
+      password: z.string().min(1).max(1024),
       client_id: z.string().optional(),
       redirect_uri: z.string().url().optional(),
       state: z.string().optional(),
@@ -27,12 +20,45 @@ export const login = async (req, res) => {
       code_challenge_method: z.string().optional(),
     });
 
-    const parsed = schema.parse(req.body);
+    const parsed = schema.parse({ ...req.query, ...req.body });
 
     const ipAddress = req.ip || req.connection?.remoteAddress;
     const userAgent = req.headers["user-agent"] || null;
 
     const normalizedEmail = parsed.email.trim().toLowerCase();
+
+    const {
+      client_id,
+      redirect_uri,
+      state,
+      code_challenge,
+      code_challenge_method,
+    } = parsed;
+    if (Boolean(client_id) !== Boolean(redirect_uri)) {
+      return res
+        .status(400)
+        .json({
+          error: "client_id and redirect_uri must be provided together",
+        });
+    }
+    if (client_id) {
+      const application = await db.Application.findOne({
+        where: { clientId: client_id },
+      });
+      if (!application)
+        return res.status(400).json({ error: "Invalid client_id" });
+      if (application.redirectUri !== redirect_uri) {
+        return res.status(400).json({ error: "Invalid redirect_uri" });
+      }
+      if (
+        !application.clientSecret &&
+        (!code_challenge || code_challenge_method !== "S256")
+      ) {
+        return res
+          .status(400)
+          .json({ error: "Public clients require S256 PKCE" });
+      }
+    }
 
     const result = await authService.loginUser(
       { email: normalizedEmail, password: parsed.password },
@@ -43,23 +69,8 @@ export const login = async (req, res) => {
     );
 
     const { accessToken, refreshToken, userId } = result;
-    const redirect_uri = req.body.redirect_uri || req.query.redirect_uri;
-    const client_id = req.body.client_id || req.query.client_id;
-    const state = req.body.state || req.query.state;
-    const code_challenge =
-      req.body.code_challenge || req.query.code_challenge || null;
-    const code_challenge_method =
-      req.body.code_challenge_method || req.query.code_challenge_method || null;
 
     if (client_id && redirect_uri) {
-      const application = await db.Application.findOne({
-        where: { clientId: client_id },
-      });
-      if (!application)
-        return res.status(400).json({ error: "Invalid client_id" });
-      if (application.redirectUri !== redirect_uri)
-        return res.status(400).json({ error: "Invalid redirect_uri" });
-
       const authCode = await authService.createAuthorizationCode({
         userId,
         clientId: client_id,
@@ -71,14 +82,18 @@ export const login = async (req, res) => {
 
       const params = new URLSearchParams({ code });
       if (state) params.set("state", state);
-
-      return res.redirect(`${redirect_uri}?${params.toString()}`);
+      setSessionCookie(res, refreshToken);
+      const redirectUrl = authorizationRedirect(redirect_uri, params);
+      if (req.get("Accept")?.includes("application/json")) {
+        return res.json({ redirectUrl });
+      }
+      return res.redirect(redirectUrl);
     }
 
+    setSessionCookie(res, refreshToken);
     res.json({ message: "Login successful", accessToken, refreshToken });
   } catch (err) {
-    console.log("LOGIN BODY:", req.body);
-    console.log("LOGIN ERROR:", err && err.message);
+    console.error("LOGIN ERROR:", err.name);
     try {
       const found = await db.User.findOne({ where: { email: req.body.email } });
       await auditLog("LOGIN_FAILURE", {

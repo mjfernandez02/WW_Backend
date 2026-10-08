@@ -40,7 +40,7 @@ router.post("/refresh", refresh);
 router.post("/logout", logout);
 router.post("/client-token", validateClient, clientToken);
 
-// Example protected route: returns current decoded token payload
+// Returns the current user after validating both the JWT and its active session.
 router.get("/me", authenticate, (req, res) => {
   res.json({ user: req.user });
 });

@@ -10,6 +10,7 @@ describe("Authorization code flow", () => {
   const redirectUri = "http://localhost/cb";
   let applicationId;
   let user;
+  const emails = [];
 
   beforeAll(async () => {
     await db.sequelize.authenticate();
@@ -24,6 +25,15 @@ describe("Authorization code flow", () => {
   });
 
   afterAll(async () => {
+    for (const email of emails) {
+      const found = await db.User.findOne({ where: { email } });
+      if (found) {
+        await db.AuthorizationCode.destroy({ where: { userId: found.id } });
+        await db.Session.destroy({ where: { userId: found.id } });
+        await db.AuditLog.destroy({ where: { userId: found.id } });
+        await found.destroy();
+      }
+    }
     if (applicationId) {
       await db.Application.destroy({ where: { id: applicationId } });
     }
@@ -33,8 +43,9 @@ describe("Authorization code flow", () => {
   beforeEach(() => {
     user = {
       email: `authflow-${Date.now()}@example.com`,
-      password: "123456",
+      password: "TestPassword123!",
     };
+    emails.push(user.email);
   });
 
   it("redirects unauthenticated authorize requests to the frontend login page", async () => {
@@ -43,7 +54,9 @@ describe("Authorization code flow", () => {
       .query({ client_id: clientId, redirect_uri: redirectUri, state: "xyz" });
 
     expect(res.status).toBe(302);
-    expect(res.headers.location).toContain("http://localhost:5173/login");
+    expect(res.headers.location).toContain(
+      process.env.FRONTEND_LOGIN_URL || "http://localhost:5173/#/login",
+    );
     expect(res.headers.location).toContain(
       `client_id=${encodeURIComponent(clientId)}`,
     );

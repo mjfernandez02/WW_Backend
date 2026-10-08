@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "vitest",
+    "test:integration": "vitest run --config vitest.integration.config.js",
     "dev": "nodemon src/server.js",
     "migrate": "sequelize-cli db:migrate",
     "start": "node src/server.js"

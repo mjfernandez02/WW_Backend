@@ -1,6 +1,10 @@
 import { z } from "zod";
 import * as authService from "../auth.service.js";
-import { getRefreshTokenFromRequest } from "./helpers.js";
+import {
+  getRefreshTokenFromRequest,
+  AUTH_SESSION_COOKIE_NAME,
+  sessionCookieOptions,
+} from "./helpers.js";
 
 export const logout = async (req, res) => {
   try {
@@ -26,12 +30,9 @@ export const logout = async (req, res) => {
       ipAddress,
       userAgent,
     });
+    const { maxAge, ...cookieOptions } = sessionCookieOptions();
+    res.clearCookie(AUTH_SESSION_COOKIE_NAME, cookieOptions);
     if (!ok) return res.status(404).json({ error: "Session not found" });
-
-    res.clearCookie(process.env.AUTH_SESSION_COOKIE_NAME || "auth_session", {
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-    });
 
     return res.json({ message: "Logged out" });
   } catch (err) {

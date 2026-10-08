@@ -20,18 +20,12 @@ export const registerUser = async ({ email, password }) => {
   const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || "12", 10);
   const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-  // Build create payload only including columns that exist in the DB table
+  // Account defaults are supplied by the migrated schema.
   const payload = {
     email: normalizedEmail,
     password: hashedPassword,
     roleId: role.id,
   };
-  try {
-    const includeFailed = await hasColumn("Users", "failedLoginAttempts");
-    const includeLocked = await hasColumn("Users", "lockedUntil");
-    if (!includeFailed) delete payload.failedLoginAttempts;
-    if (!includeLocked) delete payload.lockedUntil;
-  } catch (e) {}
 
   const user = await User.create(payload);
 
@@ -104,6 +98,7 @@ export const createSession = async ({
     process.env.JWT_SECRET,
     {
       expiresIn: "15m",
+      jwtid: crypto.randomUUID(),
     },
   );
 
@@ -150,45 +145,54 @@ export const consumeAuthorizationCode = async ({
   clientId,
   redirectUri,
   codeVerifier = null,
-} = {}) => {
-  const authCode = await AuthorizationCode.findOne({
-    where: {
-      code,
-      clientId,
-      redirectUri,
-      used: false,
-    },
-  });
-  if (!authCode) return null;
-  if (authCode.expiresAt && new Date(authCode.expiresAt) < new Date()) {
-    await authCode.destroy();
-    return null;
-  }
-
-  // If PKCE was used when issuing the code, require and validate the verifier
-  if (authCode.codeChallenge) {
-    if (!codeVerifier) return null;
-
-    const method = (authCode.codeChallengeMethod || "S256").toUpperCase();
-    if (method === "S256") {
-      const hash = crypto.createHash("sha256").update(codeVerifier).digest();
-      const expected = hash
-        .toString("base64")
-        .replace(/\+/g, "-")
-        .replace(/\//g, "_")
-        .replace(/=+$/, "");
-      if (expected !== authCode.codeChallenge) return null;
-    } else if (method === "PLAIN") {
-      if (codeVerifier !== authCode.codeChallenge) return null;
-    } else {
-      return null; // unsupported method
+  requirePkce = false,
+} = {}) =>
+  db.sequelize.transaction(async (transaction) => {
+    const authCode = await AuthorizationCode.findOne({
+      where: {
+        code,
+        clientId,
+        redirectUri,
+        used: false,
+      },
+      transaction,
+      lock: transaction.LOCK.UPDATE,
+    });
+    if (!authCode) return null;
+    if (
+      requirePkce &&
+      (!authCode.codeChallenge || authCode.codeChallengeMethod !== "S256")
+    )
+      return null;
+    if (authCode.expiresAt && new Date(authCode.expiresAt) < new Date()) {
+      await authCode.destroy({ transaction });
+      return null;
     }
-  }
 
-  authCode.used = true;
-  await authCode.save();
-  return authCode;
-};
+    // If PKCE was used when issuing the code, require and validate the verifier
+    if (authCode.codeChallenge) {
+      if (!codeVerifier) return null;
+
+      const method = (authCode.codeChallengeMethod || "S256").toUpperCase();
+      if (method === "S256") {
+        const hash = crypto.createHash("sha256").update(codeVerifier).digest();
+        const expected = hash
+          .toString("base64")
+          .replace(/\+/g, "-")
+          .replace(/\//g, "_")
+          .replace(/=+$/, "");
+        if (expected !== authCode.codeChallenge) return null;
+      } else if (method === "PLAIN") {
+        if (codeVerifier !== authCode.codeChallenge) return null;
+      } else {
+        return null; // unsupported method
+      }
+    }
+
+    authCode.used = true;
+    await authCode.save({ transaction });
+    return authCode;
+  });
 
 export const generateToken = (payload, expiresIn = "1h") => {
   return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn });
@@ -200,46 +204,53 @@ export const refreshAccessToken = async (
 ) => {
   if (!refreshToken) return null;
 
-  const session = await Session.findOne({ where: { refreshToken } });
-  if (!session) return null;
+  return db.sequelize.transaction(async (transaction) => {
+    const session = await Session.findOne({
+      where: { refreshToken },
+      transaction,
+      lock: transaction.LOCK.UPDATE,
+    });
+    if (!session) return null;
 
-  // Optionally check ipAddress/userAgent matches for extra security
-  // if (session.ipAddress && session.ipAddress !== ipAddress) return null;
+    // Optionally check ipAddress/userAgent matches for extra security
+    // if (session.ipAddress && session.ipAddress !== ipAddress) return null;
 
-  // Check expiry
-  if (session.expiresAt && new Date(session.expiresAt) < new Date()) {
-    // session expired
-    await session.destroy();
-    return null;
-  }
+    // Check expiry
+    if (session.expiresAt && new Date(session.expiresAt) < new Date()) {
+      // session expired
+      await session.destroy({ transaction });
+      return null;
+    }
 
-  // Load user to build payload
-  const user = await User.findByPk(session.userId);
-  if (!user) return null;
+    // Load user to build payload
+    const user = await User.findByPk(session.userId, { transaction });
+    if (!user) return null;
 
-  // Issue new access token
-  const accessToken = jwt.sign(
-    { userId: user.id, roleId: user.roleId },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: "15m",
-    },
-  );
+    // Issue new access token
+    const accessToken = jwt.sign(
+      { userId: user.id, roleId: user.roleId },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "15m",
+        jwtid: crypto.randomUUID(),
+      },
+    );
 
-  // Rotate refresh token
-  const newRefreshToken = crypto.randomBytes(64).toString("hex");
-  session.refreshToken = newRefreshToken;
-  session.token = accessToken;
-  session.userAgent = userAgent || session.userAgent;
-  session.ipAddress = ipAddress || session.ipAddress;
-  await session.save();
+    // Rotate refresh token
+    const newRefreshToken = crypto.randomBytes(64).toString("hex");
+    session.refreshToken = newRefreshToken;
+    session.token = accessToken;
+    session.userAgent = userAgent || session.userAgent;
+    session.ipAddress = ipAddress || session.ipAddress;
+    await session.save({ transaction });
 
-  // Audit log: token refresh
-  try {
-    await auditLog("TOKEN_REFRESH", { userId: user.id, ipAddress });
-  } catch (err) {}
+    // Audit log: token refresh
+    try {
+      await auditLog("TOKEN_REFRESH", { userId: user.id, ipAddress });
+    } catch (err) {}
 
-  return { accessToken, refreshToken: newRefreshToken };
+    return { accessToken, refreshToken: newRefreshToken };
+  });
 };
 export const revokeSession = async ({
   refreshToken = null,

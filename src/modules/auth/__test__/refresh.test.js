@@ -5,7 +5,7 @@ import { describe, it, expect, beforeAll, afterAll } from "vitest";
 
 describe("Auth access/refresh flow", () => {
   const email = `test-${Date.now()}@example.com`;
-  const password = "pass123";
+  const password = "Pass123!wordLong";
   let refreshToken;
   let accessToken;
   let userId;
@@ -18,6 +18,7 @@ describe("Auth access/refresh flow", () => {
     try {
       if (userId) {
         await db.Session.destroy({ where: { userId } });
+        await db.AuditLog.destroy({ where: { userId } });
         await db.User.destroy({ where: { id: userId } });
       } else {
         await db.User.destroy({ where: { email } });
@@ -68,6 +69,7 @@ describe("Auth access/refresh flow", () => {
     expect(r1.body.accessToken).toBeDefined();
     expect(r1.body.refreshToken).toBeDefined();
     const newRefresh = r1.body.refreshToken;
+    accessToken = r1.body.accessToken;
 
     // old refreshToken should no longer work
     await request(app)
@@ -89,6 +91,11 @@ describe("Auth access/refresh flow", () => {
     await request(app)
       .post("/api/auth/refresh")
       .send({ refreshToken })
+      .expect(401);
+
+    await request(app)
+      .get("/api/auth/me")
+      .set("Authorization", `Bearer ${accessToken}`)
       .expect(401);
   });
 });

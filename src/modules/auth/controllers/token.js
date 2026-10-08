@@ -2,7 +2,7 @@ import { z } from "zod";
 import bcrypt from "bcrypt";
 import db from "../../../database/index.js";
 import * as authService from "../auth.service.js";
-import { auditLog } from "./helpers.js";
+import { setSessionCookie } from "./helpers.js";
 
 export const token = async (req, res) => {
   try {
@@ -40,6 +40,7 @@ export const token = async (req, res) => {
       clientId: client_id,
       redirectUri: redirect_uri,
       codeVerifier: code_verifier || null,
+      requirePkce: !application.clientSecret,
     });
     if (!authCode)
       return res
@@ -56,6 +57,7 @@ export const token = async (req, res) => {
       userAgent: req.headers["user-agent"] || null,
     });
 
+    setSessionCookie(res, session.refreshToken);
     return res.json({
       access_token: session.accessToken,
       refresh_token: session.refreshToken,
@@ -63,6 +65,9 @@ export const token = async (req, res) => {
       expires_in: 15 * 60,
     });
   } catch (err) {
+    if (err instanceof z.ZodError) {
+      return res.status(400).json({ error: "Invalid token request" });
+    }
     console.error("TOKEN ERROR:", err && err.message);
     return res.status(500).json({ error: "Server error" });
   }

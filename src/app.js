@@ -9,7 +9,10 @@ import cors from "cors";
 const app = express();
 
 const normalizeOrigin = (origin) =>
-  origin?.trim().replace(/^['"]|['"]$/g, "").replace(/\/$/, "");
+  origin
+    ?.trim()
+    .replace(/^['"]|['"]$/g, "")
+    .replace(/\/$/, "");
 
 const FRONTEND_ORIGINS = (
   process.env.FRONTEND_ORIGINS || "http://localhost:5173"
@@ -17,17 +20,11 @@ const FRONTEND_ORIGINS = (
   .split(",")
   .map(normalizeOrigin)
   .filter(Boolean);
-console.log("FRONTEND_ORIGINS =", JSON.stringify(FRONTEND_ORIGINS));
 
 app.use(
   cors({
     origin: (origin, cb) => {
-      console.log("REQUEST ORIGIN =", JSON.stringify(origin));
       const normalizedOrigin = normalizeOrigin(origin);
-      console.log(
-        "ORIGIN ALLOWED =",
-        FRONTEND_ORIGINS.includes(normalizedOrigin),
-      );
 
       if (!origin) return cb(null, true);
 

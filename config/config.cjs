@@ -14,4 +14,11 @@ const config = {
 module.exports = {
   development: config,
   production: config,
+  test: {
+    ...config,
+    use_env_variable: "TEST_DATABASE_URL",
+    dialectOptions: {
+      ssl: process.env.DB_SSL === "false" ? false : config.dialectOptions.ssl,
+    },
+  },
 };

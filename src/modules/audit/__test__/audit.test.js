@@ -6,7 +6,7 @@ import { describe, it, expect, beforeAll, afterAll } from "vitest";
 
 describe("Audit logging integration", () => {
   const email = `audit-${Date.now()}@example.com`;
-  const password = "audittest1";
+  const password = "AuditTestPassword123!";
   const clientId = `client-${Date.now()}`;
   const clientSecret = "client-secret";
   let userId;
@@ -25,9 +25,6 @@ describe("Audit logging integration", () => {
         await db.User.destroy({ where: { id: userId } });
       }
       if (applicationId) {
-        await db.AuditLog.destroy({
-          where: { userId: null, action: "CLIENT_TOKEN_ISSUED" },
-        });
         await db.Application.destroy({ where: { id: applicationId } });
       }
     } catch (err) {

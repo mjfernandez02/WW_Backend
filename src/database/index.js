@@ -9,18 +9,30 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Initialize Sequelize
-if (!process.env.DATABASE_URL) {
+const databaseUrl =
+  process.env.NODE_ENV === "test"
+    ? process.env.TEST_DATABASE_URL
+    : process.env.DATABASE_URL;
+if (!databaseUrl) {
+  if (process.env.NODE_ENV === "test") {
+    throw new Error(
+      "TEST_DATABASE_URL is required for database integration tests",
+    );
+  }
   throw new Error("DATABASE_URL is required");
 }
 
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
+const sequelize = new Sequelize(databaseUrl, {
   dialect: "postgres",
   protocol: "postgres",
   logging: false,
   dialectOptions: {
-    ssl: {
-      rejectUnauthorized: false,
-    },
+    ssl:
+      process.env.DB_SSL === "false"
+        ? false
+        : {
+            rejectUnauthorized: false,
+          },
   },
 });
 
