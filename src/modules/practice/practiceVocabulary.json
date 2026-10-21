@@ -1,0 +1,602 @@
+[
+  {
+    "word": "resilient",
+    "type": "adjective",
+    "meaning": "Able to recover quickly after difficulties.",
+    "example": "The resilient community rebuilt after the storm."
+  },
+  {
+    "word": "lucid",
+    "type": "adjective",
+    "meaning": "Clear and easy to understand.",
+    "example": "Her lucid explanation helped the whole class."
+  },
+  {
+    "word": "meticulous",
+    "type": "adjective",
+    "meaning": "Showing careful attention to every detail.",
+    "example": "He kept meticulous notes during the experiment."
+  },
+  {
+    "word": "pragmatic",
+    "type": "adjective",
+    "meaning": "Solving problems in a practical and realistic way.",
+    "example": "She took a pragmatic approach to the budget."
+  },
+  {
+    "word": "eloquent",
+    "type": "adjective",
+    "meaning": "Expressing ideas fluently and persuasively.",
+    "example": "His eloquent speech inspired the audience."
+  },
+  {
+    "word": "abundant",
+    "type": "adjective",
+    "meaning": "Existing in large amounts.",
+    "example": "The garden produced an abundant harvest."
+  },
+  {
+    "word": "ambiguous",
+    "type": "adjective",
+    "meaning": "Having more than one possible meaning.",
+    "example": "The ambiguous message left us unsure what to do."
+  },
+  {
+    "word": "amiable",
+    "type": "adjective",
+    "meaning": "Friendly and pleasant to be around.",
+    "example": "Our amiable neighbor greeted everyone warmly."
+  },
+  {
+    "word": "assertive",
+    "type": "adjective",
+    "meaning": "Confident in expressing needs or opinions.",
+    "example": "Her assertive response made her position clear."
+  },
+  {
+    "word": "authentic",
+    "type": "adjective",
+    "meaning": "Genuine and true to its origin or character.",
+    "example": "The museum displayed an authentic ancient coin."
+  },
+  {
+    "word": "benevolent",
+    "type": "adjective",
+    "meaning": "Kind and eager to help others.",
+    "example": "The benevolent donor paid for the school supplies."
+  },
+  {
+    "word": "candid",
+    "type": "adjective",
+    "meaning": "Honest and direct when expressing thoughts.",
+    "example": "We had a candid conversation about the problem."
+  },
+  {
+    "word": "cautious",
+    "type": "adjective",
+    "meaning": "Careful to avoid danger or mistakes.",
+    "example": "The cautious driver slowed down in the rain."
+  },
+  {
+    "word": "coherent",
+    "type": "adjective",
+    "meaning": "Logical and well connected.",
+    "example": "She presented a coherent argument for the change."
+  },
+  {
+    "word": "concise",
+    "type": "adjective",
+    "meaning": "Expressing much in few words.",
+    "example": "His concise summary covered the main points."
+  },
+  {
+    "word": "credible",
+    "type": "adjective",
+    "meaning": "Believable and worthy of trust.",
+    "example": "The reporter checked whether the source was credible."
+  },
+  {
+    "word": "curious",
+    "type": "adjective",
+    "meaning": "Eager to learn or discover something.",
+    "example": "The curious child asked how stars form."
+  },
+  {
+    "word": "diligent",
+    "type": "adjective",
+    "meaning": "Working carefully with steady effort.",
+    "example": "The diligent student reviewed her notes daily."
+  },
+  {
+    "word": "diverse",
+    "type": "adjective",
+    "meaning": "Including a variety of different kinds.",
+    "example": "The festival attracted a diverse crowd."
+  },
+  {
+    "word": "elusive",
+    "type": "adjective",
+    "meaning": "Difficult to find, catch, or achieve.",
+    "example": "The elusive bird vanished into the forest."
+  },
+  {
+    "word": "empathetic",
+    "type": "adjective",
+    "meaning": "Able to understand and share another person\u0027s feelings.",
+    "example": "The empathetic teacher listened to his worries."
+  },
+  {
+    "word": "ephemeral",
+    "type": "adjective",
+    "meaning": "Lasting for only a short time.",
+    "example": "The rainbow\u0027s ephemeral beauty delighted us."
+  },
+  {
+    "word": "frugal",
+    "type": "adjective",
+    "meaning": "Careful with money and other resources.",
+    "example": "Her frugal habits helped her save for college."
+  },
+  {
+    "word": "impartial",
+    "type": "adjective",
+    "meaning": "Fair and free from favoritism.",
+    "example": "An impartial judge listened to both sides."
+  },
+  {
+    "word": "inevitable",
+    "type": "adjective",
+    "meaning": "Certain to happen and impossible to avoid.",
+    "example": "With the dark clouds overhead, rain seemed inevitable."
+  },
+  {
+    "word": "innovative",
+    "type": "adjective",
+    "meaning": "Introducing new ideas or methods.",
+    "example": "Their innovative design used less energy."
+  },
+  {
+    "word": "inquisitive",
+    "type": "adjective",
+    "meaning": "Interested in asking questions and investigating.",
+    "example": "The inquisitive visitor wanted to know how the machine worked."
+  },
+  {
+    "word": "intrepid",
+    "type": "adjective",
+    "meaning": "Brave when facing danger or difficulty.",
+    "example": "The intrepid explorer crossed the icy valley."
+  },
+  {
+    "word": "judicious",
+    "type": "adjective",
+    "meaning": "Showing good judgment in making decisions.",
+    "example": "A judicious use of time helped us finish early."
+  },
+  {
+    "word": "modest",
+    "type": "adjective",
+    "meaning": "Not boastful about personal abilities or achievements.",
+    "example": "Despite her success, she remained modest."
+  },
+  {
+    "word": "nostalgic",
+    "type": "adjective",
+    "meaning": "Feeling a fond longing for the past.",
+    "example": "The old song made him nostalgic for childhood."
+  },
+  {
+    "word": "optimistic",
+    "type": "adjective",
+    "meaning": "Hopeful that good things will happen.",
+    "example": "She stayed optimistic about finding a solution."
+  },
+  {
+    "word": "persistent",
+    "type": "adjective",
+    "meaning": "Continuing despite difficulty or opposition.",
+    "example": "His persistent effort finally paid off."
+  },
+  {
+    "word": "plausible",
+    "type": "adjective",
+    "meaning": "Seeming reasonable or likely to be true.",
+    "example": "She offered a plausible explanation for the delay."
+  },
+  {
+    "word": "profound",
+    "type": "adjective",
+    "meaning": "Having great depth of meaning or importance.",
+    "example": "The book had a profound effect on my thinking."
+  },
+  {
+    "word": "reluctant",
+    "type": "adjective",
+    "meaning": "Unwilling or hesitant to do something.",
+    "example": "He was reluctant to leave his hometown."
+  },
+  {
+    "word": "resourceful",
+    "type": "adjective",
+    "meaning": "Skilled at finding ways to solve problems.",
+    "example": "The resourceful camper repaired the tent with spare cord."
+  },
+  {
+    "word": "scrupulous",
+    "type": "adjective",
+    "meaning": "Careful to act honestly and follow moral principles.",
+    "example": "The scrupulous accountant reported every expense accurately."
+  },
+  {
+    "word": "serene",
+    "type": "adjective",
+    "meaning": "Calm, peaceful, and untroubled.",
+    "example": "The lake looked serene at sunrise."
+  },
+  {
+    "word": "skeptical",
+    "type": "adjective",
+    "meaning": "Doubtful and wanting evidence before believing.",
+    "example": "She was skeptical of the extraordinary claim."
+  },
+  {
+    "word": "spontaneous",
+    "type": "adjective",
+    "meaning": "Happening naturally without advance planning.",
+    "example": "We took a spontaneous trip to the beach."
+  },
+  {
+    "word": "subtle",
+    "type": "adjective",
+    "meaning": "Delicate or hard to notice immediately.",
+    "example": "There was a subtle change in her tone."
+  },
+  {
+    "word": "tenacious",
+    "type": "adjective",
+    "meaning": "Holding firmly to a goal and refusing to give up.",
+    "example": "The tenacious athlete kept training after the setback."
+  },
+  {
+    "word": "tranquil",
+    "type": "adjective",
+    "meaning": "Quiet and free from disturbance.",
+    "example": "We spent a tranquil afternoon beside the river."
+  },
+  {
+    "word": "versatile",
+    "type": "adjective",
+    "meaning": "Able to serve many purposes or adapt to different tasks.",
+    "example": "This versatile tool works in the kitchen and garden."
+  },
+  {
+    "word": "vigilant",
+    "type": "adjective",
+    "meaning": "Watchful for possible danger or problems.",
+    "example": "The vigilant guard noticed the open door."
+  },
+  {
+    "word": "vivid",
+    "type": "adjective",
+    "meaning": "Producing clear and strong images or impressions.",
+    "example": "She gave a vivid description of the parade."
+  },
+  {
+    "word": "wary",
+    "type": "adjective",
+    "meaning": "Not fully trusting and alert to possible trouble.",
+    "example": "The hikers were wary of the slippery path."
+  },
+  {
+    "word": "whimsical",
+    "type": "adjective",
+    "meaning": "Playfully unusual or imaginative.",
+    "example": "The cafe had whimsical paintings on its walls."
+  },
+  {
+    "word": "zealous",
+    "type": "adjective",
+    "meaning": "Showing intense enthusiasm for a cause or activity.",
+    "example": "The zealous volunteers worked all weekend."
+  },
+  {
+    "word": "aspiration",
+    "type": "noun",
+    "meaning": "A strong hope or ambition to achieve something.",
+    "example": "Her aspiration is to become a scientist."
+  },
+  {
+    "word": "barrier",
+    "type": "noun",
+    "meaning": "Something that blocks movement or progress.",
+    "example": "Language was a barrier to communication."
+  },
+  {
+    "word": "clarity",
+    "type": "noun",
+    "meaning": "The quality of being clear and easy to understand.",
+    "example": "The diagram added clarity to the instructions."
+  },
+  {
+    "word": "compassion",
+    "type": "noun",
+    "meaning": "Concern for another person\u0027s suffering and a desire to help.",
+    "example": "He showed compassion to the injured animal."
+  },
+  {
+    "word": "consensus",
+    "type": "noun",
+    "meaning": "General agreement among a group of people.",
+    "example": "The team reached a consensus after the discussion."
+  },
+  {
+    "word": "constraint",
+    "type": "noun",
+    "meaning": "A limit that restricts what can be done.",
+    "example": "Time was our biggest constraint on the project."
+  },
+  {
+    "word": "curiosity",
+    "type": "noun",
+    "meaning": "A desire to learn or know more.",
+    "example": "Her curiosity led her to study the ocean."
+  },
+  {
+    "word": "dilemma",
+    "type": "noun",
+    "meaning": "A difficult choice between competing possibilities.",
+    "example": "He faced a dilemma about which offer to accept."
+  },
+  {
+    "word": "empathy",
+    "type": "noun",
+    "meaning": "The ability to understand and share another person\u0027s feelings.",
+    "example": "Empathy helped her support a grieving friend."
+  },
+  {
+    "word": "endeavor",
+    "type": "noun",
+    "meaning": "A serious effort to achieve a goal.",
+    "example": "Opening the library was a community endeavor."
+  },
+  {
+    "word": "foresight",
+    "type": "noun",
+    "meaning": "The ability to anticipate future needs or events.",
+    "example": "Their foresight ensured there were enough supplies."
+  },
+  {
+    "word": "gratitude",
+    "type": "noun",
+    "meaning": "A feeling of thankfulness.",
+    "example": "She expressed gratitude for their support."
+  },
+  {
+    "word": "harmony",
+    "type": "noun",
+    "meaning": "A state of peaceful agreement or balance.",
+    "example": "The neighbors lived together in harmony."
+  },
+  {
+    "word": "incentive",
+    "type": "noun",
+    "meaning": "Something that encourages a person to act.",
+    "example": "The prize was an incentive to enter the contest."
+  },
+  {
+    "word": "integrity",
+    "type": "noun",
+    "meaning": "The quality of being honest and having strong moral principles.",
+    "example": "Her integrity earned the team\u0027s trust."
+  },
+  {
+    "word": "intuition",
+    "type": "noun",
+    "meaning": "An understanding or feeling reached without conscious reasoning.",
+    "example": "His intuition told him something was wrong."
+  },
+  {
+    "word": "momentum",
+    "type": "noun",
+    "meaning": "The strength or energy that keeps something moving or developing.",
+    "example": "The campaign gained momentum after the first meeting."
+  },
+  {
+    "word": "nuance",
+    "type": "noun",
+    "meaning": "A small difference in meaning, expression, or feeling.",
+    "example": "The translation missed a nuance of the original phrase."
+  },
+  {
+    "word": "obstacle",
+    "type": "noun",
+    "meaning": "Something that stands in the way of success.",
+    "example": "The fallen tree was an obstacle on the trail."
+  },
+  {
+    "word": "perspective",
+    "type": "noun",
+    "meaning": "A particular way of viewing or understanding something.",
+    "example": "Travel gave her a new perspective on everyday life."
+  },
+  {
+    "word": "precedent",
+    "type": "noun",
+    "meaning": "An earlier event or decision that guides later ones.",
+    "example": "The ruling established a precedent for similar cases."
+  },
+  {
+    "word": "resilience",
+    "type": "noun",
+    "meaning": "The capacity to recover after hardship or change.",
+    "example": "The town showed resilience after the flood."
+  },
+  {
+    "word": "solitude",
+    "type": "noun",
+    "meaning": "The state of being alone.",
+    "example": "He enjoyed the solitude of the quiet cabin."
+  },
+  {
+    "word": "synergy",
+    "type": "noun",
+    "meaning": "The added benefit that comes from working together.",
+    "example": "The partnership created synergy between the two teams."
+  },
+  {
+    "word": "versatility",
+    "type": "noun",
+    "meaning": "The ability to adapt to many different uses or tasks.",
+    "example": "The instrument\u0027s versatility made it popular with musicians."
+  },
+  {
+    "word": "adapt",
+    "type": "verb",
+    "meaning": "To change in order to suit new conditions.",
+    "example": "Plants adapt to the climate around them."
+  },
+  {
+    "word": "alleviate",
+    "type": "verb",
+    "meaning": "To make pain or difficulty less severe.",
+    "example": "The cool cloth helped alleviate the headache."
+  },
+  {
+    "word": "anticipate",
+    "type": "verb",
+    "meaning": "To expect something and prepare for it.",
+    "example": "We anticipate heavy traffic before the concert."
+  },
+  {
+    "word": "articulate",
+    "type": "verb",
+    "meaning": "To express an idea clearly in words.",
+    "example": "She could articulate exactly what the team needed."
+  },
+  {
+    "word": "collaborate",
+    "type": "verb",
+    "meaning": "To work with others toward a shared goal.",
+    "example": "The artists collaborate on a large mural."
+  },
+  {
+    "word": "comprehend",
+    "type": "verb",
+    "meaning": "To understand the meaning of something.",
+    "example": "The example helped me comprehend the rule."
+  },
+  {
+    "word": "cultivate",
+    "type": "verb",
+    "meaning": "To develop or encourage growth over time.",
+    "example": "He reads widely to cultivate his imagination."
+  },
+  {
+    "word": "deduce",
+    "type": "verb",
+    "meaning": "To reach a conclusion through logical reasoning.",
+    "example": "We can deduce the cause from the available clues."
+  },
+  {
+    "word": "demonstrate",
+    "type": "verb",
+    "meaning": "To show how something works or prove it with evidence.",
+    "example": "The instructor will demonstrate the technique."
+  },
+  {
+    "word": "discern",
+    "type": "verb",
+    "meaning": "To recognize or distinguish something carefully.",
+    "example": "She could discern a shape in the fog."
+  },
+  {
+    "word": "elaborate",
+    "type": "verb",
+    "meaning": "To add more detail to an explanation.",
+    "example": "Please elaborate on your plan for the garden."
+  },
+  {
+    "word": "embrace",
+    "type": "verb",
+    "meaning": "To accept an idea or change willingly.",
+    "example": "The school decided to embrace new teaching methods."
+  },
+  {
+    "word": "enhance",
+    "type": "verb",
+    "meaning": "To improve the quality or value of something.",
+    "example": "Fresh herbs enhance the flavor of the soup."
+  },
+  {
+    "word": "evaluate",
+    "type": "verb",
+    "meaning": "To assess the quality, value, or effectiveness of something.",
+    "example": "We evaluate each proposal before choosing one."
+  },
+  {
+    "word": "facilitate",
+    "type": "verb",
+    "meaning": "To make a process or action easier.",
+    "example": "The shared calendar will facilitate planning."
+  },
+  {
+    "word": "illustrate",
+    "type": "verb",
+    "meaning": "To explain or clarify using examples or pictures.",
+    "example": "These photographs illustrate how the town has changed."
+  },
+  {
+    "word": "implement",
+    "type": "verb",
+    "meaning": "To put a plan or decision into action.",
+    "example": "The council will implement the recycling program."
+  },
+  {
+    "word": "infer",
+    "type": "verb",
+    "meaning": "To form a conclusion from evidence rather than a direct statement.",
+    "example": "We can infer from the wet pavement that it rained."
+  },
+  {
+    "word": "mitigate",
+    "type": "verb",
+    "meaning": "To reduce the harmful effects of something.",
+    "example": "Planting trees can mitigate the effects of extreme heat."
+  },
+  {
+    "word": "persevere",
+    "type": "verb",
+    "meaning": "To keep working despite difficulties or delays.",
+    "example": "She chose to persevere after her first attempt failed."
+  },
+  {
+    "word": "prioritize",
+    "type": "verb",
+    "meaning": "To decide which tasks or needs should come first.",
+    "example": "We prioritize urgent repairs before cosmetic changes."
+  },
+  {
+    "word": "reconcile",
+    "type": "verb",
+    "meaning": "To restore agreement or make conflicting things compatible.",
+    "example": "They met to reconcile their differences."
+  },
+  {
+    "word": "refine",
+    "type": "verb",
+    "meaning": "To improve something through small, careful changes.",
+    "example": "The writer continued to refine the final paragraph."
+  },
+  {
+    "word": "sustain",
+    "type": "verb",
+    "meaning": "To maintain or support something over time.",
+    "example": "Regular rainfall helps sustain the forest."
+  },
+  {
+    "word": "verify",
+    "type": "verb",
+    "meaning": "To check that something is accurate or true.",
+    "example": "Please verify the address before sending the package."
+  }
+]
