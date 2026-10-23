@@ -7,7 +7,7 @@ const { mockDb } = vi.hoisted(() => ({
   mockDb: {
     AuditLog: { create: vi.fn() },
     Session: { findOne: vi.fn() },
-    User: { findByPk: vi.fn() },
+    User: { findByPk: vi.fn(), findAll: vi.fn() },
     PracticeQuiz: { create: vi.fn(), findOne: vi.fn() },
     PracticeCompletion: { findOne: vi.fn(), create: vi.fn() },
     sequelize: { transaction: vi.fn() },
@@ -43,6 +43,7 @@ describe("practice progress and server-side grading", () => {
     };
 
     mockDb.User.findByPk.mockReset().mockResolvedValue(user);
+    mockDb.User.findAll.mockReset().mockResolvedValue([]);
     mockDb.Session.findOne.mockReset().mockResolvedValue({
       userId,
       expiresAt: new Date(Date.now() + 60_000),
@@ -173,6 +174,38 @@ describe("practice progress and server-side grading", () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ userId, xp: 30, points: 15 });
+  });
+
+  it("returns users ordered by XP with email and stable ranks", async () => {
+    mockDb.User.findAll.mockResolvedValue([
+      { id: 7, email: "top@example.com", xp: 240 },
+      { id: userId, email: "learner@example.com", xp: 120 },
+    ]);
+
+    const response = await request(app)
+      .get("/api/practice/leaderboard")
+      .set("Authorization", `Bearer ${token}`)
+      .expect(200);
+
+    expect(response.body).toEqual({
+      leaderboard: [
+        { rank: 1, userId: 7, email: "top@example.com", xp: 240 },
+        { rank: 2, userId, email: "learner@example.com", xp: 120 },
+      ],
+    });
+    expect(mockDb.User.findAll).toHaveBeenCalledWith({
+      attributes: ["id", "email", "xp"],
+      order: [
+        ["xp", "DESC"],
+        ["id", "ASC"],
+      ],
+      limit: 100,
+    });
+  });
+
+  it("requires authentication to view the leaderboard", async () => {
+    await request(app).get("/api/practice/leaderboard").expect(401);
+    expect(mockDb.User.findAll).not.toHaveBeenCalled();
   });
 
   it("rejects a valid JWT when its database session has been revoked", async () => {

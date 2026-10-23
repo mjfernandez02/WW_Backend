@@ -68,6 +68,25 @@ export const getProgress = async (userId) => {
   return { userId: user.id, xp: user.xp, points: user.points };
 };
 
+export const getLeaderboard = async () => {
+  const users = await db.User.findAll({
+    attributes: ["id", "email", "xp", "createdAt"],
+    order: [
+      ["xp", "DESC"],
+      ["createdAt", "ASC"],
+      ["id", "ASC"],
+    ],
+    limit: 100,
+  });
+
+  return users.map((user, index) => ({
+    rank: index + 1,
+    userId: user.id,
+    email: user.email,
+    xp: user.xp,
+  }));
+};
+
 export const feedPet = async (userId) =>
   db.sequelize.transaction(async (transaction) => {
     const user = await db.User.findByPk(userId, {

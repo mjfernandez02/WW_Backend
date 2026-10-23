@@ -122,6 +122,10 @@ authenticated user, expires after 30 minutes, and can only be completed once.
 `GET /api/practice/progress` returns the current `{ userId, xp, points }`
 balances. Apply all pending migrations before using these endpoints.
 
+`GET /api/practice/leaderboard` requires bearer authentication and returns the
+top 100 users ordered by XP, with email addresses used as display names and a
+stable rank for each entry.
+
 `POST /api/practice/pet/feed` requires the same bearer authentication. The server
 deducts 10 points under a user row lock, returns the current balances, and rejects
 insufficient funds with HTTP 409. Pet happiness is currently displayed for the

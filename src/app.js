@@ -15,7 +15,7 @@ const normalizeOrigin = (origin) =>
     .replace(/\/$/, "");
 
 const FRONTEND_ORIGINS = (
-  process.env.FRONTEND_ORIGINS || "http://localhost:5173"
+  process.env.FRONTEND_ORIGINS
 )
   .split(",")
   .map(normalizeOrigin)

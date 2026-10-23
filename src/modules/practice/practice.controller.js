@@ -30,6 +30,16 @@ export const getProgress = async (req, res) => {
   }
 };
 
+export const getLeaderboard = async (_req, res) => {
+  try {
+    const leaderboard = await practiceService.getLeaderboard();
+    return res.json({ leaderboard });
+  } catch (err) {
+    console.error("PRACTICE LEADERBOARD ERROR:", err && err.message);
+    return res.status(500).json({ error: "Server error" });
+  }
+};
+
 export const getPracticeQuiz = async (req, res) => {
   try {
     const quiz = await practiceService.createPracticeQuiz(req.user.userId);
