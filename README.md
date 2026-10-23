@@ -48,6 +48,7 @@ This README documents backend setup, architecture, security considerations, test
 - `src/modules/auth/auth.service.js` — core auth logic: create/consume authorization codes (PKCE), create sessions, refresh rotation, token generation
 - `models/authorizationCode.js` — authorization code model (stores `codeChallenge`, `codeChallengeMethod`)
 - `src/database/index.js` — dynamic model loader (Windows-safe file:// import fix)
+- `src/modules/practice/` — authenticated practice completion and XP/points endpoints
 
 ---
 
@@ -55,7 +56,7 @@ This README documents backend setup, architecture, security considerations, test
 
 Prerequisites:
 
-- Node.js (16+ recommended)
+- Node.js 22.18+ or 24 LTS
 - A PostgreSQL database configured via `DATABASE_URL`
 
 Install:
@@ -67,6 +68,8 @@ npm install
 Environment variables (summary) — set these in `.env` or your deployment environment:
 
 - `DATABASE_URL` — PostgreSQL connection string
+- `TEST_DATABASE_URL` — separate PostgreSQL database for integration tests; tests never fall back to `DATABASE_URL`
+- `DB_SSL` — set to `false` for a local PostgreSQL database without TLS
 - `JWT_SECRET` — secret for signing access tokens
 - `FRONTEND_ORIGINS` — comma-separated allowed origins for CORS
 - `FRONTEND_LOGIN_URL` — URL to redirect unauthenticated authorize requests to (SPA login)
@@ -84,6 +87,46 @@ npx sequelize-cli db:migrate
 npx sequelize-cli db:seed:all
 ```
 
+## WordWell practice rewards
+
+Users have `xp` and `points` integer balances stored on the `Users` row. The
+backend owns the practice vocabulary and answer key. WordWell requests a
+user-specific quiz using the user's bearer access token:
+
+```http
+GET /api/practice/quiz
+Authorization: Bearer <access-token>
+```
+
+The response contains questions with opaque option IDs and no correct answers.
+Submit the selections to be graded against the server-stored answer key:
+
+```http
+POST /api/practice/complete
+Authorization: Bearer <access-token>
+Content-Type: application/json
+
+{
+  "quizId": "<quiz-id-from-GET>",
+  "answers": [
+    { "questionId": "<question-id>", "optionId": "<selected-option-id>" }
+  ]
+}
+```
+
+Include one selected option for each of the five question IDs returned by the
+quiz endpoint.
+
+Each correct answer awards 20 XP and 5 points. The quiz is associated with the
+authenticated user, expires after 30 minutes, and can only be completed once.
+`GET /api/practice/progress` returns the current `{ userId, xp, points }`
+balances. Apply all pending migrations before using these endpoints.
+
+`POST /api/practice/pet/feed` requires the same bearer authentication. The server
+deducts 10 points under a user row lock, returns the current balances, and rejects
+insufficient funds with HTTP 409. Pet happiness is currently displayed for the
+current page session; no persistent pet-state model is implemented.
+
 ---
 
 ## Running the app
@@ -97,10 +140,28 @@ npm run dev   # or whatever start script you prefer
 Run the tests:
 
 ```bash
-npm run test
+npm test -- --run
 ```
 
-You should see the vitest runner; test suites for auth (including authorization-code-flow) are present under `src/modules/auth/__test__/`.
+The default suite runs mocked auth/security and practice tests without connecting
+to a database. Database integration tests require a separate test database:
+
+```bash
+# Set TEST_DATABASE_URL and JWT_SECRET in your environment first.
+npx sequelize-cli db:migrate --env test
+npx sequelize-cli db:seed:all --env test
+npm run test:integration
+```
+
+Integration tests include real concurrent code exchanges, refreshes, quiz
+completions, and coin deductions. Do not point `TEST_DATABASE_URL` at a database
+used by the app: these tests create and delete their own records.
+
+WordWell uses a hash router. Its login URL is normally
+`http://localhost:5173/#/login`, and a browser client's registered callback is
+`http://localhost:5173/#/callback`. Browser clients must have no client secret and
+use S256 PKCE. Login requests accepting `application/json` receive a validated
+`redirectUrl`; other OAuth login requests retain HTTP redirects.
 
 ---
 
@@ -123,7 +184,7 @@ You should see the vitest runner; test suites for auth (including authorization-
   - Keep `JWT_SECRET` and any client secrets safe and rotated periodically.
 
 - Rate limiting & abuse:
-  - Token endpoints should be rate-limited in production (not implemented in this demo).
+  - All API endpoints share the global rate limit; login and registration have stricter per-endpoint limits.
 
 - HTTPS/HSTS:
   - Serve the production auth service over HTTPS and enable HSTS. Cookies with `SameSite=None` require `secure`.

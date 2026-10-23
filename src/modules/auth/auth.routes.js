@@ -19,14 +19,14 @@ const router = express.Router();
 // Per-endpoint rate limiters for auth endpoints
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // limit each IP to 10 login attempts per windowMs
+  max: 50, // limit each IP to 50 login attempts per windowMs
   standardHeaders: true,
   legacyHeaders: false,
 });
 
 const registerLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 5, // limit each IP to 5 registrations per hour
+  windowMs: 30 * 60 * 1000, // 30 minutes
+  max: 50, // limit each IP to 50 registrations per hour
   standardHeaders: true,
   legacyHeaders: false,
 });
