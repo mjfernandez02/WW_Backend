@@ -7,7 +7,7 @@ import db from "../../database/index.js";
 import auditLog from "../audit/log.js";
 import { hasColumn } from "../../utils/dbSchema.js";
 
-const { User, Role, Session, AuthorizationCode } = db;
+const { User, Role, Session, AuthorizationCode, PasswordReset } = db;
 
 export const registerUser = async ({ email, password }) => {
   const normalizedEmail = (email || "").trim().toLowerCase();
@@ -281,3 +281,46 @@ export const revokeSession = async ({
 
   return false;
 };
+
+export const    generateResetToken = async (userId) => {
+  const token = crypto.randomBytes(32).toString("hex");
+  const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+  const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+  await PasswordReset.create({
+    userId,
+    tokenHash,
+    expiresAt,
+  });
+
+  return token;
+};
+
+export const verifyResetToken = async (token) => {
+  const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+  const resetRecord = await PasswordReset.findOne({
+    where: {
+      tokenHash,
+      used: false,
+    },
+  });
+
+  if (!resetRecord) return null;
+  if (resetRecord.expiresAt < new Date()) {
+    await resetRecord.destroy();
+    return null;
+  }
+
+  return resetRecord.userId;
+};
+
+export const resetUserPassword = async (userId, newPassword) => {
+  const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || "12", 10);
+  const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+  await User.update({ password: hashedPassword }, { where: { id: userId } });
+  await PasswordReset.update({ used: true }, { where: { userId } });
+
+  return true;
+};
+

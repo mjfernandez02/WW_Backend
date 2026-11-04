@@ -10,6 +10,8 @@ import {
   clientToken,
   session,
 } from "./auth.controller.js";
+import { forgotPassword } from "./controllers/forgotPassword.js";
+import { resetPassword } from "./controllers/resetPassword.js";
 import validateClient from "../../middleware/ClientMiddleware.js";
 import { authenticate } from "./auth.middleware.js";
 import roleMiddleware from "../../middleware/RoleMiddleware.js";
@@ -31,8 +33,17 @@ const registerLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+const passwordResetLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5, // limit each IP to 5 reset attempts per hour
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 router.post("/register", registerLimiter, register);
 router.post("/login", loginLimiter, login);
+router.post("/forgot-password", passwordResetLimiter, forgotPassword);
+router.post("/reset-password", passwordResetLimiter, resetPassword);
 router.get("/authorize", authorize);
 router.post("/token", token);
 router.get("/session", session);
