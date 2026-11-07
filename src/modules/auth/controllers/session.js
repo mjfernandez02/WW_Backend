@@ -6,7 +6,7 @@ export const session = async (req, res) => {
     if (!user) return res.json({ authenticated: false });
     return res.json({
       authenticated: true,
-      user: { id: user.id, email: user.email },
+      user: { id: user.id, email: user.email, username: user.username },
     });
   } catch (err) {
     console.error("SESSION ERROR:", err && err.message);

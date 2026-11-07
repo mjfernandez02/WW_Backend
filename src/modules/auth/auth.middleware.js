@@ -46,6 +46,7 @@ export const authenticate = async (req, res, next) => {
       userId: user.id,
       id: user.id,
       email: user.email,
+      username: user.username,
       roleId: user.roleId,
       xp: user.xp,
       points: user.points,

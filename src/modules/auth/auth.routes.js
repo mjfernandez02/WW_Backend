@@ -14,6 +14,7 @@ import { forgotPassword } from "./controllers/forgotPassword.js";
 import { resetPassword } from "./controllers/resetPassword.js";
 import validateClient from "../../middleware/ClientMiddleware.js";
 import { authenticate } from "./auth.middleware.js";
+import { setUsername } from "./controllers/setUsername.js";
 import roleMiddleware from "../../middleware/RoleMiddleware.js";
 
 const router = express.Router();
@@ -55,6 +56,7 @@ router.post("/client-token", validateClient, clientToken);
 router.get("/me", authenticate, (req, res) => {
   res.json({ user: req.user });
 });
+router.put("/username", authenticate, setUsername);
 
 // Example admin-only route (roleId 1 = ADMIN per seeders)
 router.get("/admin", authenticate, roleMiddleware(1), (req, res) => {
