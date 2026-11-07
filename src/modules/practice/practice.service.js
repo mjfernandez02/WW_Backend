@@ -199,7 +199,7 @@ export const getProgress = async (userId) => {
 
 export const getLeaderboard = async () => {
   const users = await db.User.findAll({
-    attributes: ["id", "email", "xp", "createdAt"],
+    attributes: ["id", "username", "xp", "createdAt"],
     order: [
       ["xp", "DESC"],
       ["createdAt", "ASC"],
@@ -211,7 +211,7 @@ export const getLeaderboard = async () => {
   return users.map((user, index) => ({
     rank: index + 1,
     userId: user.id,
-    email: user.email,
+    username: user.username,
     xp: user.xp,
   }));
 };

@@ -176,10 +176,10 @@ describe("practice progress and server-side grading", () => {
     expect(response.body).toEqual({ userId, xp: 30, points: 15 });
   });
 
-  it("returns users ordered by XP with email and stable ranks", async () => {
+  it("returns users ordered by XP with usernames and stable ranks", async () => {
     mockDb.User.findAll.mockResolvedValue([
-      { id: 7, email: "top@example.com", xp: 240 },
-      { id: userId, email: "learner@example.com", xp: 120 },
+      { id: 7, username: "top_learner", xp: 240 },
+      { id: userId, username: "wordsmith", xp: 120 },
     ]);
 
     const response = await request(app)
@@ -189,12 +189,12 @@ describe("practice progress and server-side grading", () => {
 
     expect(response.body).toEqual({
       leaderboard: [
-        { rank: 1, userId: 7, email: "top@example.com", xp: 240 },
-        { rank: 2, userId, email: "learner@example.com", xp: 120 },
+        { rank: 1, userId: 7, username: "top_learner", xp: 240 },
+        { rank: 2, userId, username: "wordsmith", xp: 120 },
       ],
     });
     expect(mockDb.User.findAll).toHaveBeenCalledWith({
-      attributes: ["id", "email", "xp", "createdAt"],
+      attributes: ["id", "username", "xp", "createdAt"],
       order: [
         ["xp", "DESC"],
         ["createdAt", "ASC"],
