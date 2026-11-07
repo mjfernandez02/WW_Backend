@@ -2,6 +2,7 @@ import express from "express";
 import { authenticate } from "../auth/auth.middleware.js";
 import {
   completePractice,
+  checkPracticeAnswer,
   getPracticeQuiz,
   getLeaderboard,
   getProgress,
@@ -12,6 +13,7 @@ const router = express.Router();
 
 router.use(authenticate);
 router.get("/quiz", getPracticeQuiz);
+router.post("/check-answer", checkPracticeAnswer);
 router.get("/leaderboard", getLeaderboard);
 router.get("/progress", getProgress);
 router.post("/complete", completePractice);

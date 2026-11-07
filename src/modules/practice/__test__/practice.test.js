@@ -194,9 +194,10 @@ describe("practice progress and server-side grading", () => {
       ],
     });
     expect(mockDb.User.findAll).toHaveBeenCalledWith({
-      attributes: ["id", "email", "xp"],
+      attributes: ["id", "email", "xp", "createdAt"],
       order: [
         ["xp", "DESC"],
+        ["createdAt", "ASC"],
         ["id", "ASC"],
       ],
       limit: 100,
@@ -227,6 +228,28 @@ describe("practice progress and server-side grading", () => {
     expect(response.body.questions[0].correctAnswer).toBeUndefined();
     expect(response.body.questions[0].answerKey).toBeUndefined();
     expect(quizzes[0].answerKey).toHaveLength(5);
+  });
+
+  it("checks a confirmed answer without exposing the full answer key", async () => {
+    const quizResponse = await createQuiz();
+    const answer = quizzes[0].answerKey[0];
+
+    const response = await request(app)
+      .post("/api/practice/check-answer")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        quizId: quizResponse.body.quizId,
+        questionId: answer.questionId,
+        optionId: answer.correctOptionId,
+      })
+      .expect(200);
+
+    expect(response.body).toEqual({
+      status: "checked",
+      correct: true,
+      correctOptionId: answer.correctOptionId,
+    });
+    expect(response.body.answerKey).toBeUndefined();
   });
 
   it("awards XP and points according to server-graded correct answers", async () => {

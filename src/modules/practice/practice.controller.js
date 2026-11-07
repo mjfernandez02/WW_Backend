@@ -51,6 +51,38 @@ export const getPracticeQuiz = async (req, res) => {
   }
 };
 
+export const checkPracticeAnswer = async (req, res) => {
+  const schema = z.object({
+    quizId: z.string().uuid(),
+    questionId: z.string().uuid(),
+    optionId: z.string().uuid(),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ error: "Invalid quiz answer" });
+  }
+
+  try {
+    const result = await practiceService.checkPracticeAnswer({
+      userId: req.user.userId,
+      ...parsed.data,
+    });
+    if (result.status === "quiz_not_found") {
+      return res.status(404).json({ error: "Quiz not found" });
+    }
+    if (result.status === "quiz_expired") {
+      return res.status(410).json({ error: "Quiz has expired" });
+    }
+    if (result.status === "invalid_answer") {
+      return res.status(400).json({ error: "Answer does not match this quiz" });
+    }
+    return res.json(result);
+  } catch (err) {
+    console.error("PRACTICE ANSWER CHECK ERROR:", err && err.message);
+    return res.status(500).json({ error: "Server error" });
+  }
+};
+
 export const completePractice = async (req, res) => {
   const schema = z.object({
     quizId: z.string().uuid(),

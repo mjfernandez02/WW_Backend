@@ -254,6 +254,32 @@ export const createPracticeQuiz = async (userId) => {
   };
 };
 
+export const checkPracticeAnswer = async ({
+  userId,
+  quizId,
+  questionId,
+  optionId,
+}) => {
+  const quiz = await db.PracticeQuiz.findOne({
+    where: { id: quizId, userId },
+  });
+  if (!quiz) return { status: "quiz_not_found" };
+  if (new Date(quiz.expiresAt) <= new Date()) return { status: "quiz_expired" };
+
+  const answer = quiz.answerKey?.find(
+    (entry) => entry.questionId === questionId,
+  );
+  if (!answer || !answer.optionIds.includes(optionId)) {
+    return { status: "invalid_answer" };
+  }
+
+  return {
+    status: "checked",
+    correct: answer.correctOptionId === optionId,
+    correctOptionId: answer.correctOptionId,
+  };
+};
+
 export const completePractice = async ({ userId, quizId, answers }) =>
   db.sequelize.transaction(async (transaction) => {
     const user = await db.User.findByPk(userId, {
