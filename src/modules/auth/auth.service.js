@@ -9,10 +9,15 @@ import { hasColumn } from "../../utils/dbSchema.js";
 
 const { User, Role, Session, AuthorizationCode, PasswordReset } = db;
 
-export const registerUser = async ({ email, password }) => {
+export const registerUser = async ({ email, password, username }) => {
   const normalizedEmail = (email || "").trim().toLowerCase();
+  const normalizedUsername = (username || "").trim().toLowerCase();
   const existing = await User.findOne({ where: { email: normalizedEmail } });
   if (existing) throw new Error("Email already exists");
+  const existingUsername = await User.findOne({
+    where: { username: normalizedUsername },
+  });
+  if (existingUsername) throw new Error("Username already exists");
 
   const role = await Role.findOne({ where: { name: "USER" } });
   if (!role) throw new Error("Role not found");
@@ -23,6 +28,7 @@ export const registerUser = async ({ email, password }) => {
   // Account defaults are supplied by the migrated schema.
   const payload = {
     email: normalizedEmail,
+    username: normalizedUsername,
     password: hashedPassword,
     roleId: role.id,
   };

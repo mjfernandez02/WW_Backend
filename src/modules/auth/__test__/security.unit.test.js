@@ -95,6 +95,7 @@ describe("auth security regressions", () => {
     db.User.create.mockResolvedValue({
       id: 42,
       email: "user@example.com",
+      username: "word_user",
       roleId: 2,
       password: "sensitive-hash",
       failedLoginAttempts: 0,
@@ -103,11 +104,16 @@ describe("auth security regressions", () => {
     });
     const response = await request(app)
       .post("/api/auth/register")
-      .send({ email: "user@example.com", password: "SecurePassword123!" });
+      .send({
+        username: "word_user",
+        email: "user@example.com",
+        password: "SecurePassword123!",
+      });
     expect(response.status).toBe(201);
     expect(response.body.data).toEqual({
       id: 42,
       email: "user@example.com",
+      username: "word_user",
       roleId: 2,
       xp: 0,
       points: 0,

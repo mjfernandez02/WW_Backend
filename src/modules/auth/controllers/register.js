@@ -7,6 +7,9 @@ export const register = async (req, res) => {
   try {
     const schema = z.object({
       email: z.string().email(),
+      username: z.string().trim().min(3).max(24).regex(/^[a-zA-Z0-9_]+$/, {
+        message: "Username can only use letters, numbers, and underscores",
+      }),
       // Stronger password policy: min 12 chars, mixed types
       password: z
         .string()
@@ -22,6 +25,7 @@ export const register = async (req, res) => {
 
     const user = await authService.registerUser({
       email: normalizedEmail,
+      username: parsed.username,
       password: parsed.password,
     });
 
@@ -37,6 +41,7 @@ export const register = async (req, res) => {
       data: {
         id: user.id,
         email: user.email,
+        username: user.username,
         roleId: user.roleId,
         xp: user.xp,
         points: user.points,
@@ -68,6 +73,9 @@ export const register = async (req, res) => {
       (err.message && err.message.includes("Email already exists"))
     ) {
       return sendError(res, "EMAIL_TAKEN", "Email already in use", 409);
+    }
+    if (err.message && err.message.includes("Username already exists")) {
+      return sendError(res, "USERNAME_TAKEN", "Username already in use", 409);
     }
 
     return sendError(res, "SERVER_ERROR", "Something went wrong", 500);
